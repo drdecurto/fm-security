@@ -1,0 +1,18 @@
+data:
+  raw_dir: "data/raw"
+  processed_dir: "data/processed"
+  random_state: 42
+
+models:
+  device: "auto"
+  random_state: 42
+
+evaluation:
+  n_runs: 5
+  test_size: 0.3
+  few_shot_k: [5, 10, 25, 50, 100, 500]
+  output_dir: "results"
+
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"

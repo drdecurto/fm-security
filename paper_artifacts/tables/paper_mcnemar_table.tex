@@ -1,0 +1,24 @@
+% Paired McNemar tests on the n=6000 LLM subsample.
+\begin{table}[t]
+\centering
+\caption{Paired McNemar tests for the LLM versus each anchor on the identical $n=6000$ E7 LLM subsample. $b$ is the number of samples where the LLM is correct and the anchor is wrong; $c$ the reverse. Significant differences ($p<0.05$) marked with $^{*}$.}
+\label{tab:mcnemar}
+\small
+\begin{tabular}{lllrrrl}
+\toprule
+Dataset & LLM & Anchor & $\Delta$acc & $b$ (LLM only) & $c$ (anc only) & $p$ \\
+\midrule
+HAI & Qwen3-235B-A22B & RandomForest & -0.036 & 253 & 472 & 5.66e-16$^{*}$ \\
+HAI & Qwen3-235B-A22B & TabICL & -0.072 & 262 & 696 & 1.80e-44$^{*}$ \\
+HAI & Qwen3-235B-A22B & TabPFN & -0.001 & 428 & 432 & 0.919 \\
+\midrule
+SWaT & Qwen3-235B-A22B & RandomForest & +0.008 & 137 & 87 & 1.06e-03$^{*}$ \\
+SWaT & Qwen3-235B-A22B & TabICL & +0.017 & 228 & 123 & 2.84e-08$^{*}$ \\
+SWaT & Qwen3-235B-A22B & TabPFN & +0.032 & 364 & 171 & 1.03e-16$^{*}$ \\
+\midrule
+WUSTL & Qwen3-235B-A22B & RandomForest & +0.003 & 18 & 2 & 4.02e-04$^{*}$ \\
+WUSTL & Qwen3-235B-A22B & TabICL & +0.001 & 15 & 8 & 0.210 \\
+WUSTL & Qwen3-235B-A22B & TabPFN & +0.001 & 20 & 14 & 0.391 \\
+\bottomrule
+\end{tabular}
+\end{table}

@@ -1,0 +1,33 @@
+# ─── Core scientific stack ────────────────────────────────────────────
+numpy>=1.24.0
+pandas>=2.0.0
+scipy>=1.11.0
+scikit-learn>=1.3.0
+joblib>=1.3.0
+
+# ─── Plotting ─────────────────────────────────────────────────────────
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# ─── Tabular foundation models ────────────────────────────────────────
+tabpfn>=2.0.0
+tabicl>=2.0.0
+
+# ─── Dataset access (Kaggle mirrors used by the notebooks and the
+#     optional kagglehub_loader patch) ──────────────────────────────────
+kagglehub>=0.2.0
+
+# ─── LLM API clients (for notebooks/experiments/) ────────────────────
+openai>=1.0.0       # Nebius AI Studio is OpenAI-compatible
+
+# ─── Class imbalance utilities ────────────────────────────────────────
+imbalanced-learn>=0.11.0
+
+# ─── Misc ─────────────────────────────────────────────────────────────
+tqdm>=4.65.0
+PyYAML>=6.0
+
+# ─── Jupyter (only required for the notebook reproducibility path) ────
+jupyter>=1.0.0
+ipykernel>=6.0
+nbformat>=5.9

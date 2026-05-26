@@ -1,0 +1,17 @@
+% WUSTL multi-class (5 classes) -- E7 multi-seed (3 seeds)
+\begin{table}[t]
+\centering
+\caption{Genuine multi-class evaluation on WUSTL-IIoT-2021 (5 classes: \textsf{Backdoor}, \textsf{CommInj}, \textsf{DoS}, \textsf{Normal}, \textsf{Reconn}). Mean $\pm$ std across 3 seeds.}
+\label{tab:wustl-mc}
+\small
+\begin{tabular}{llrrr}
+\toprule
+Model & Kind & Accuracy & Macro F1 & MCC \\
+\midrule
+TabPFN & Anchor & 0.992 $\pm$ 0.000 & 0.924 $\pm$ 0.003 & 0.985 $\pm$ 0.000 \\
+RandomForest & Anchor & 0.988 $\pm$ 0.001 & 0.883 $\pm$ 0.003 & 0.979 $\pm$ 0.001 \\
+TabICL & Anchor & 0.986 $\pm$ 0.001 & 0.862 $\pm$ 0.004 & 0.976 $\pm$ 0.002 \\
+Qwen3-235B-A22B & LLM & 0.981 $\pm$ 0.004 & 0.805 $\pm$ 0.011 & 0.967 $\pm$ 0.007 \\
+\bottomrule
+\end{tabular}
+\end{table}

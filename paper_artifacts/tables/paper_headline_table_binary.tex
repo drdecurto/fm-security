@@ -1,0 +1,28 @@
+% Headline table -- E7 multi-seed, binary classification
+% LLM evaluated on n=6000 stratified subsample; anchors on FULL holdout.
+\begin{table}[t]
+\centering
+\caption{Cross-dataset E7 multi-seed binary evaluation. Values are mean $\pm$ standard deviation across 3 seeds. Anchors are evaluated on the full held-out test set; the LLM on a stratified subsample of $n_{\mathrm{LLM}}=6000$. Best per dataset (in MCC) is bolded.}
+\label{tab:headline}
+\small
+\begin{tabular}{llrrrrr}
+\toprule
+Dataset & Model & Acc. & Macro F1 & MCC & FAR & DR \\
+\midrule
+HAI & TabICL & \textbf{0.733 $\pm$ 0.019} & 0.678 $\pm$ 0.014 & \textbf{0.432 $\pm$ 0.013} & 0.288 $\pm$ 0.029 & 0.822 $\pm$ 0.028 \\
+HAI & RandomForest & 0.707 $\pm$ 0.014 & 0.657 $\pm$ 0.011 & 0.413 $\pm$ 0.014 & 0.326 $\pm$ 0.019 & 0.842 $\pm$ 0.012 \\
+HAI & TabPFN & 0.683 $\pm$ 0.006 & 0.641 $\pm$ 0.006 & 0.406 $\pm$ 0.010 & 0.363 $\pm$ 0.006 & 0.875 $\pm$ 0.006 \\
+HAI & Qwen3-235B-A22B & 0.690 $\pm$ 0.003 & 0.633 $\pm$ 0.004 & 0.350 $\pm$ 0.012 & 0.328 $\pm$ 0.003 & 0.764 $\pm$ 0.016 \\
+\midrule
+SWaT & RandomForest & 0.827 $\pm$ 0.001 & 0.822 $\pm$ 0.001 & 0.695 $\pm$ 0.002 & 0.003 $\pm$ 0.002 & 0.657 $\pm$ 0.003 \\
+SWaT & TabICL & 0.818 $\pm$ 0.001 & 0.813 $\pm$ 0.001 & 0.671 $\pm$ 0.003 & 0.022 $\pm$ 0.003 & 0.659 $\pm$ 0.003 \\
+SWaT & TabPFN & 0.805 $\pm$ 0.000 & 0.803 $\pm$ 0.000 & 0.627 $\pm$ 0.001 & 0.080 $\pm$ 0.002 & 0.691 $\pm$ 0.001 \\
+SWaT & Qwen3-235B-A22B & \textbf{0.836 $\pm$ 0.003} & 0.833 $\pm$ 0.004 & \textbf{0.700 $\pm$ 0.005} & 0.026 $\pm$ 0.003 & 0.699 $\pm$ 0.008 \\
+\midrule
+WUSTL & TabPFN & \textbf{0.988 $\pm$ 0.000} & 0.988 $\pm$ 0.000 & \textbf{0.976 $\pm$ 0.000} & 0.022 $\pm$ 0.000 & 0.998 $\pm$ 0.000 \\
+WUSTL & TabICL & 0.985 $\pm$ 0.000 & 0.985 $\pm$ 0.000 & 0.971 $\pm$ 0.001 & 0.028 $\pm$ 0.000 & 0.999 $\pm$ 0.001 \\
+WUSTL & RandomForest & 0.985 $\pm$ 0.001 & 0.985 $\pm$ 0.001 & 0.970 $\pm$ 0.002 & 0.023 $\pm$ 0.002 & 0.993 $\pm$ 0.001 \\
+WUSTL & Qwen3-235B-A22B & 0.986 $\pm$ 0.000 & 0.986 $\pm$ 0.000 & 0.972 $\pm$ 0.001 & 0.026 $\pm$ 0.000 & 0.998 $\pm$ 0.000 \\
+\bottomrule
+\end{tabular}
+\end{table}
