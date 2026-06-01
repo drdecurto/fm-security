@@ -46,3 +46,26 @@ figure-regeneration notebook in `../notebooks/figures/` will pick it up.
 `../notebooks/figures/ot_ics_ids_paper_figures_v2.ipynb` unzips each
 archive, parses every CSV, and writes the paper figures and tables into
 `../paper_artifacts/`.
+
+## Supplementary archives (`supplementary/`)
+
+The `supplementary/` subfolder holds the **supplementary** result
+archives. These are *not* part of the canonical six and are not read by
+`ot_ics_ids_paper_figures_v2.ipynb` (which keys off an explicit filename
+map); they back the ablation tables and figures added during review.
+
+| Filename | Produced by | Contents |
+|---|---|---|
+| `swat_v10_temporal.zip` | `../notebooks/experiments/ot_ics_ids_llm_nebius_v10_swat.ipynb` | Full E1–E8 / R1 / R2 tree for SWaT under both `random` and stratified `chronological` splits (temporal-leakage ablation), plus E8 hybrid. Includes `manifest_swat.json`. |
+| `hai_v10_temporal.zip` | `../notebooks/experiments/ot_ics_ids_llm_nebius_v10_hai.ipynb` | Same for HAI. Includes `manifest_hai.json`. |
+| `xgboost_anchor_e7.zip` | `../notebooks/experiments/ot_ics_ids_xgboost_anchor_v1_3.ipynb` | XGBoost anchor under the E7 K-shot protocol: `xgb_master_summary.csv`, per-task `xgb_e7_*.csv`, `xgb_perclass_wustl.csv`, `xgb_selected_features.csv`. Feeds the new XGBoost rows in Table 2 and Table 5. |
+| `anchor_maxctx_sweep.zip` | `../notebooks/experiments/ot_ics_ids_anchor_maxctx_v1_4.ipynb` | Max-context sensitivity sweep: `v14_sweep_A_kshot.csv`, `v14_sweep_B_maxctx.csv`, `v14_combined.csv`, `v14_delta.csv`, `v14_summary.csv`, `v14_perclass_wustl.csv` (paper §5.7). |
+| `cost_pareto_regen.zip` | `../notebooks/figures/regenerate_cost_pareto.ipynb` | Corrected-pricing cost CSVs (`e5_cost_{swat,hai,wustl}_regen.csv`). The matching figure is written directly to `../paper_artifacts/figures/fig_cost_pareto.{pdf,png}`. |
+
+### v10 internal layout
+
+The two v10 temporal archives follow the same
+`ot_ics_ids_llm_nebius_v1_outputs/` tree as the canonical six, with two
+additions: `E7_full_test/` now carries both `*_random_*` and
+`*_chronological_*` variants of each summary / McNemar / per-seed file,
+and a new `E8_hybrid/` subfolder holds the hybrid-stage results.

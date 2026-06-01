@@ -38,9 +38,12 @@ llm-security/
 │   ├── evaluation/                   Metrics, pipeline, few-shot, visualization
 │   └── experiments/                  Executable: baseline, few-shot, rare-attack, cross-domain
 ├── notebooks/
-│   ├── experiments/                  Six v8 notebooks: LLM evaluation per (dataset, mode)
-│   └── figures/                      Figure-generation notebook (paper-ready output)
-├── runs/                             Six result-zip archives from the paper's E1–R2 runs
+│   ├── experiments/                  v8 LLM notebooks (per dataset, mode) + supplementary
+│   │                                 extensions: v10 temporal-split ablation (SWaT, HAI),
+│   │                                 XGBoost anchor, anchor max-context sensitivity
+│   └── figures/                      Figure-generation notebook + cost-Pareto regeneration
+├── runs/                             Six canonical result-zip archives (E1–R2)
+│   └── supplementary/                supplementary archives (v10 temporal, XGBoost, max-ctx, cost regen)
 ├── paper_artifacts/
 │   ├── tables/                       LaTeX tables embedded in the paper
 │   └── figures/                      Publication figures (PDF + PNG)
@@ -125,6 +128,19 @@ Running an experiment notebook requires:
 - **Kaggle API credentials** for dataset access (the notebooks use `kagglehub`).
 - **2–6 hours of wall-clock time** per notebook on a single CPU machine; the LLM inference dominates.
 
+### Path B+ — Supplementary extensions (`notebooks/experiments/`)
+
+Four further notebooks were added during the revision round. They reuse the v8 protocol and feed supplementary tables, figures, and ablations; their result archives live under `runs/supplementary/`.
+
+| Notebook | What it adds | LLM key needed? | Output archive |
+|---|---|---|---|
+| `ot_ics_ids_llm_nebius_v10_swat.ipynb` | Temporal-split ablation on SWaT (stratified chronological 80/20) addressing temporal-leakage concerns in 1 Hz industrial time-series; `SPLIT_MODE` knob reproduces v8 (`random`) or runs the ablation (`chronological`); adds an E8 hybrid stage | Yes | `swat_v10_temporal.zip` |
+| `ot_ics_ids_llm_nebius_v10_hai.ipynb` | Same temporal-split ablation on HAI | Yes | `hai_v10_temporal.zip` |
+| `ot_ics_ids_xgboost_anchor_v1_3.ipynb` | **XGBoost** as a second classical anchor under the exact E7 K-shot protocol (10 per class, top-12 MI features, seeds 42/43/44); feeds new XGBoost rows into Tables 2 and 5 | No | `xgboost_anchor_e7.zip` |
+| `ot_ics_ids_anchor_maxctx_v1_4.ipynb` | **Max-context sensitivity** (§5.7): each tabular/classical anchor (RF, XGBoost, TabPFN, TabICL) evaluated at both the K-shot budget and its native maximum, testing whether the K-shot ranking transfers to a data-unconstrained regime; LLMs not re-run (K=10 is their ceiling) | No (TabPFN token for its max-ctx arm) | `anchor_maxctx_sweep.zip` |
+
+The XGBoost and max-context notebooks are anchor-only and finish in minutes. The cost-Pareto figure is regenerated separately with corrected Qwen3 pricing (\$0.20 / \$0.60 per 1M tokens) via `notebooks/figures/regenerate_cost_pareto.ipynb`; see [`paper_artifacts/README.md`](paper_artifacts/README.md).
+
 ### Dataset access
 
 The three OT/ICS benchmarks are loaded from their public Kaggle mirrors:
@@ -143,7 +159,7 @@ The notebooks resolve dataset paths automatically via `kagglehub`. The scriptabl
 
 | Aspect | Setting |
 |---|---|
-| Tabular anchors | Random Forest (sklearn, 200 trees), TabPFN (cloud API), TabICL v1.1-20250506 (local CPU) |
+| Tabular anchors | Random Forest (sklearn, 200 trees), XGBoost (supplementary second classical anchor), TabPFN (cloud API), TabICL v1.1-20250506 (local CPU) |
 | Open-source LLMs | Qwen3-235B-A22B, Llama-3.3-70B, Hermes-4-70B, Hermes-4-405B (Nebius AI Studio) |
 | In-context examples | K = 10 per class, role-instructed system message |
 | Holdout | 80/20 stratified split; anchors see full holdout (≈ 100k rows), LLMs see n = 6,000 stratified subsample |
@@ -162,6 +178,7 @@ The CSV files inside the `runs/` archives follow a fixed naming convention:
 | **E5** | Cost analysis (USD per correct prediction, LLM only) |
 | **E6** | Per-class confusion matrices (multi-class only) |
 | **E7** | Primary multi-seed evaluation (3 seeds, full protocol) |
+| **E8** | Hybrid-stage evaluation (v10 notebooks only) |
 | **R1** | Cross-seed multi-LLM comparison (5 seeds, all LLMs vs RandomForest) |
 | **R2** | Per-class multi-seed analysis (5 seeds, WUSTL multi-class only) |
 
