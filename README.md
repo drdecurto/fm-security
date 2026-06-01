@@ -31,7 +31,7 @@ If you only want to regenerate the paper figures from the pre-computed runs, jum
 ## Repository layout
 
 ```
-llm-security/
+fm-security/
 ├── src/                              Scriptable Python package (see src/README.md)
 │   ├── data/                         Dataset loaders (SWaT, HAI, WUSTL-IIoT)
 │   ├── models/                       Random Forest, TabPFN, TabICL wrappers
@@ -60,8 +60,8 @@ llm-security/
 Requires Python 3.10+ and approximately 10 GB of disk space (for cached Kaggle datasets and TabPFN model weights):
 
 ```bash
-git clone https://github.com/drdecurto/llm-security.git
-cd llm-security
+git clone https://github.com/drdecurto/fm-security.git
+cd fm-security
 pip install -r requirements.txt
 ```
 
