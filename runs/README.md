@@ -61,6 +61,7 @@ map); they back the ablation tables and figures added during review.
 | `xgboost_anchor_e7.zip` | `../notebooks/experiments/ot_ics_ids_xgboost_anchor_v1_3.ipynb` | XGBoost anchor under the E7 K-shot protocol: `xgb_master_summary.csv`, per-task `xgb_e7_*.csv`, `xgb_perclass_wustl.csv`, `xgb_selected_features.csv`. Feeds the new XGBoost rows in Table 2 and Table 5. |
 | `anchor_maxctx_sweep.zip` | `../notebooks/experiments/ot_ics_ids_anchor_maxctx_v1_4.ipynb` | Max-context sensitivity sweep: `v14_sweep_A_kshot.csv`, `v14_sweep_B_maxctx.csv`, `v14_combined.csv`, `v14_delta.csv`, `v14_summary.csv`, `v14_perclass_wustl.csv` (paper §5.7). |
 | `cost_pareto_regen.zip` | `../notebooks/figures/regenerate_cost_pareto.ipynb` | Corrected-pricing cost CSVs (`e5_cost_{swat,hai,wustl}_regen.csv`). The matching figure is written directly to `../paper_artifacts/figures/fig_cost_pareto.{pdf,png}`. |
+| `ot_ics_ids_revision.zip` | `../notebooks/experiments/ot_ics_ids_revision_experiments_v7.ipynb` | Reviewer-response revision bundle (blocks REV-A…REV-F): hybrid cascade, feature-count ablation, t-SNE/UMAP embeddings, complexity profile, leave-one-attack-type-out generalisation, and the 2×2 headline figure. See *Revision archive internal layout* below. |
 
 ### v10 internal layout
 
@@ -69,3 +70,35 @@ The two v10 temporal archives follow the same
 additions: `E7_full_test/` now carries both `*_random_*` and
 `*_chronological_*` variants of each summary / McNemar / per-seed file,
 and a new `E8_hybrid/` subfolder holds the hybrid-stage results.
+
+### Revision archive internal layout
+
+`ot_ics_ids_revision.zip` is rooted at `ot_ics_ids_revision_outputs/`, with one
+subfolder per reviewer-response block. Each block carries its own CSV(s) plus the
+figure or LaTeX table it backs in the paper:
+
+```
+ot_ics_ids_revision_outputs/
+├── REV_A_hybrid/          R1.1 — predicted-class router + confidence-gated cascade (WUSTL 5-class)
+│   ├── reva_standalone.csv, reva_router.csv, reva_cascade.csv
+│   └── reva_cascade_curve.{pdf,png}        → Fig. fgr:cascade  (drcoyz/reva_cascade_curve)
+├── REV_B_featablation/    R2.8 — feature-count ablation, K_feat ∈ {6,8,10,12,16,20,all}
+│   ├── revb_featablation.csv
+│   └── revb_featablation.{pdf,png}         → Table t:featablation, Fig. fgr:featablation
+├── REV_C_embeddings/      R2.4 — t-SNE / UMAP normal-vs-attack projections (3 datasets)
+│   └── revc_embeddings.{pdf,png}           → Fig. fgr:embeddings  (drcoyz/revc_embeddings)
+├── REV_D_complexity/      R2.5 — per-method computational profile
+│   └── revd_complexity.csv, revd_complexity.tex   → Table t:complexity
+├── REV_E_crosscampaign/   R1.2 — leave-one-attack-type-out generalisation (WUSTL)
+│   ├── reve_crosscampaign.csv
+│   └── reve_crosscampaign.{pdf,png}        → Table t:unseen, Fig. fgr:unseen
+└── REV_F_figure1/         R1.3 — headline forest plot rebuilt as a 2×2 panel
+    ├── fig1_values.csv
+    └── fig_forest_headline_2x2.{pdf,png}   → Fig. fgr:headline2x2
+```
+
+REV-F is rebuilt directly from the committed canonical archives (`E7_full_test`
+summaries plus `xgboost_anchor_e7.zip`), so the headline figure is reproducible
+from the repository with no manual transcription. The figure/table short names in
+the right-hand column are the LaTeX `\includegraphics` / `\label` targets used by
+the manuscript.

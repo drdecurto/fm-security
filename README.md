@@ -16,6 +16,11 @@ We benchmark four open-source Large Language Models (Qwen3-235B-A22B, Llama-3.3-
 
 On the WUSTL 5-class attack taxonomy, every evaluated LLM is 13–28 percentage points weaker than Random Forest on traffic-rich attacks (Denial-of-Service, Reconnaissance) but remains competitive on rare, subtle attack types (Backdoor, Command Injection).
 
+Two deployment-relevant findings were added in the revision round (see *Path B++ — Reviewer-response revision experiments* below):
+
+- **Confidence-gated cascade.** Escalating only the tabular model's low-confidence decisions to the LLM (≈ 6.3 % of samples at τ = 0.5) lifts WUSTL 5-class macro F1 to **0.945** and MCC to **0.946**, exceeding either standalone detector at a small, tunable query budget.
+- **Generalisation to unseen attack families.** Under leave-one-attack-type-out, the classical anchors collapse (XGBoost mean recall 0.178, Random Forest 0.454) while the foundation models and the LLM retain it (TabPFN 0.641, TabICL 0.792, LLM 0.795) — the gap between detector families *widens* on families never seen at training time.
+
 ## Two reproducibility paths
 
 This repository supports two complementary ways to reproduce the paper's results, with different cost and dependency profiles:
@@ -25,6 +30,7 @@ This repository supports two complementary ways to reproduce the paper's results
 | **Scriptable package (`src/`)** | Tabular anchors (RF, TabPFN, TabICL) and baseline / few-shot / rare-attack / cross-domain experiments | Minutes on CPU | TabPFN cloud API (free tier) |
 | **Notebooks (`notebooks/experiments/`)** | Full LLM evaluation against the Nebius AI Studio API, all six (dataset × mode) combinations | Hours per notebook | Nebius AI Studio API key + Kaggle credentials |
 | **Figure regeneration (`notebooks/figures/`)** | Reads result CSVs and produces every figure and table in the paper | Under one minute | None |
+| **Revision notebook (`notebooks/experiments/…_revision_experiments_v7.ipynb`)** | Reviewer-response additions REV-A…F: hybrid cascade, feature-count ablation, t-SNE/UMAP, complexity profile, unseen-family generalisation, 2×2 headline | Minutes (anchor-only blocks) to a few hours (REV-A LLM cascade) | Nebius API for REV-A; keyless otherwise |
 
 If you only want to regenerate the paper figures from the pre-computed runs, jump to [Quick start: regenerate figures](#quick-start-regenerate-figures-and-tables).
 
@@ -40,10 +46,12 @@ fm-security/
 ├── notebooks/
 │   ├── experiments/                  v8 LLM notebooks (per dataset, mode) + supplementary
 │   │                                 extensions: v10 temporal-split ablation (SWaT, HAI),
-│   │                                 XGBoost anchor, anchor max-context sensitivity
+│   │                                 XGBoost anchor, anchor max-context sensitivity, and the
+│   │                                 reviewer-response revision notebook (revision v7, REV-A…F)
 │   └── figures/                      Figure-generation notebook + cost-Pareto regeneration
 ├── runs/                             Six canonical result-zip archives (E1–R2)
-│   └── supplementary/                supplementary archives (v10 temporal, XGBoost, max-ctx, cost regen)
+│   └── supplementary/                supplementary archives (v10 temporal, XGBoost, max-ctx,
+│                                     cost regen) plus the REV-A…F revision bundle `ot_ics_ids_revision.zip`
 ├── paper_artifacts/
 │   ├── tables/                       LaTeX tables embedded in the paper
 │   └── figures/                      Publication figures (PDF + PNG)
@@ -141,6 +149,33 @@ Four further notebooks were added during the revision round. They reuse the v8 p
 
 The XGBoost and max-context notebooks are anchor-only and finish in minutes. The cost-Pareto figure is regenerated separately with corrected Qwen3 pricing (\$0.20 / \$0.60 per 1M tokens) via `notebooks/figures/regenerate_cost_pareto.ipynb`; see [`paper_artifacts/README.md`](paper_artifacts/README.md).
 
+### Path B++ — Reviewer-response revision experiments (`ot_ics_ids_revision_experiments_v7.ipynb`)
+
+A single self-contained notebook, `notebooks/experiments/ot_ics_ids_revision_experiments_v7.ipynb` (revision v7), implements the additional experimentation requested in the *Electronics* revision round. It condenses the v8/v10 shared pipeline (identical MI feature selection, balanced K-shot split, RF/XGBoost/TabPFN/TabICL configs, role-instructed JSON prompt and label parser, and FAR/DR/MCC metrics) into **PART 1**, then runs six independent blocks in **PART 2**, each guarded by a flag in the CONFIG cell and writing its own artifacts. Run PART 1 top-to-bottom once, then run whichever blocks you need.
+
+| Block | Reviewer ask | Needs Nebius LLM key? | Output folder | Backs in paper |
+|---|---|---|---|---|
+| **REV-A** | R1.1 — deployable hybrid: predicted-class router **+** confidence-gated cascade on WUSTL 5-class | Yes | `REV_A_hybrid/` | §6.4, Fig. `fgr:cascade` |
+| **REV-B** | R2.8 — feature-count ablation, *K*<sub>feat</sub> ∈ {6, 8, 10, 12, 16, 20, all} across model families | Optional (anchors run keyless) | `REV_B_featablation/` | §5.9, Table `t:featablation`, Fig. `fgr:featablation` |
+| **REV-C** | R2.4 — t-SNE / UMAP normal-vs-attack distribution visualisations | No | `REV_C_embeddings/` | §3, Fig. `fgr:embeddings` |
+| **REV-D** | R2.5 — complexity table (params, size, inference time, memory, approx. FLOPs) | No | `REV_D_complexity/` | §5.5, Table `t:complexity` |
+| **REV-E** | R1.2 — cross-campaign (leave-one-attack-type-out) generalisation on WUSTL | Optional | `REV_E_crosscampaign/` | §5.11, Table `t:unseen`, Fig. `fgr:unseen` |
+| **REV-F** | R1.3 — headline Figure 1 rebuilt as a legible 2×2 panel, directly from the committed `runs/` archives | No | `REV_F_figure1/` | §5.1, Fig. `fgr:headline2x2` |
+
+The outputs of a full run are committed as `runs/supplementary/ot_ics_ids_revision.zip` (internally rooted at `ot_ics_ids_revision_outputs/`, with one `REV_*` subfolder per block); unzip it to inspect every revision figure and table without re-execution. The paths below are relative to `ot_ics_ids_revision_outputs/` and map to the paper as follows:
+
+| Archive path | Artifact | Paper element |
+|---|---|---|
+| `REV_A_hybrid/reva_standalone.csv`, `reva_router.csv`, `reva_cascade.csv` | Standalone / router / cascade operating points | §6.4 numbers |
+| `REV_A_hybrid/reva_cascade_curve.{pdf,png}` | Escalation-fraction vs macro-F1 frontier | Fig. `fgr:cascade` (`drcoyz/reva_cascade_curve`) |
+| `REV_B_featablation/revb_featablation.csv` + `.{pdf,png}` | MCC vs *K*<sub>feat</sub> per method/dataset | Table `t:featablation`, Fig. `fgr:featablation` (`drcoyz/revb_featablation`) |
+| `REV_C_embeddings/revc_embeddings.{pdf,png}` | t-SNE / UMAP projections (3 datasets) | Fig. `fgr:embeddings` (`drcoyz/revc_embeddings`) |
+| `REV_D_complexity/revd_complexity.csv` + `.tex` | Per-method computational profile | Table `t:complexity` |
+| `REV_E_crosscampaign/reve_crosscampaign.csv` + `.{pdf,png}` | Leave-one-attack-type-out recall | Table `t:unseen`, Fig. `fgr:unseen` (`drcoyz/reve_crosscampaign`) |
+| `REV_F_figure1/fig_forest_headline_2x2.{pdf,png}` + `fig1_values.csv` | 2×2 headline forest plot | Fig. `fgr:headline2x2` (`drcoyz/fig_forest_headline_2x2`) |
+
+Credentials are the same as the other notebooks (Colab Secrets or env vars): `KAGGLE_USERNAME` / `KAGGLE_KEY` for all blocks, `NEBIUS_API_KEY` for REV-A and the optional LLM arms of REV-B/REV-E, and `TABPFN_TOKEN` for TabPFN. REV-F reads only the committed `runs/` archives and needs no credentials; set `REPO_ROOT` in the CONFIG cell to the repository root before running it.
+
 ### Dataset access
 
 The three OT/ICS benchmarks are loaded from their public Kaggle mirrors:
@@ -181,6 +216,14 @@ The CSV files inside the `runs/` archives follow a fixed naming convention:
 | **E8** | Hybrid-stage evaluation (v10 notebooks only) |
 | **R1** | Cross-seed multi-LLM comparison (5 seeds, all LLMs vs RandomForest) |
 | **R2** | Per-class multi-seed analysis (5 seeds, WUSTL multi-class only) |
+| **REV-A** | Deployable hybrid: predicted-class router + confidence-gated cascade (WUSTL 5-class) |
+| **REV-B** | Feature-count ablation, *K*<sub>feat</sub> ∈ {6, 8, 10, 12, 16, 20, all}, across model families |
+| **REV-C** | t-SNE / UMAP normal-vs-attack distribution visualisations |
+| **REV-D** | Per-method complexity profile (params, size, inference time, memory, approx. FLOPs) |
+| **REV-E** | Cross-campaign generalisation: leave-one-attack-type-out on WUSTL |
+| **REV-F** | Headline Figure 1 rebuilt as a 2×2 panel from the committed `runs/` archives |
+
+Codes **E1–R2** are produced by the v8/v10 notebooks and the scriptable package; **REV-A–REV-F** are produced by the revision notebook `ot_ics_ids_revision_experiments_v7.ipynb` and committed as `runs/supplementary/ot_ics_ids_revision.zip`.
 
 
 ## Acknowledgements
